@@ -1,0 +1,106 @@
+---
+title: "final year projects"
+author: "karthi"
+date: "2024-12-10"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+#import the Dataset
+```{r}
+project=read.csv(("C:/Users/lenovo/Downloads/employe data.csv"))
+projects=data.frame(project)
+projects
+```
+
+#Dimension of the dataset
+```{r}
+dim(projects)
+```
+#Head()/retrive the first six rows
+```{r}
+head(projects)
+```
+#summary()/summarise the data
+```{r}
+summary(projects)
+```
+
+#na.omit functions to used to remove the missing values
+```{r}
+projects=na.omit(projects)
+projects
+```
+#colsums is used to check whether the missing values or not 
+```{r}
+colSums(is.na(projects))
+```
+#no of variables in the employee dataset along no of rows & columns using cat() function to show that.
+```{r}
+cat("No. of Rows:",nrow(projects),"\nNo. of Columns:",ncol(projects),"\n\n")
+str(project)
+```
+
+#Random Number Generator (Reproduce pupose)
+```{r}
+set.seed(42)
+```
+
+#splitting the dataset.# train_data & test_data
+```{r}
+train_indices = sample(1:nrow(projects),size=0.8*nrow(projects)) #MODEL SPLITTING
+train_data = projects[train_indices,]
+test_data = projects[-train_indices,]
+```
+
+#After splitted the dataset 
+```{r}
+cat(
+  "No. of Rows (in Test Dataset):",nrow(projects),
+  "\nNo. of Columns (in Test Dataset):",ncol(test_data),
+  "\n\nNo. of Rows (in Training Dataset):",nrow(train_data),
+  "\nNo. of Columns (in Training Dataset):",ncol(train_data)
+    )
+```
+
+```{r}
+train_data
+```
+
+```{r}
+test_data
+```
+
+#linear model regression/test_data
+```{r}
+model=lm(satisfaction_level~Emp.ID+salary+promotion_last_5years+average_montly_hours+last_evaluation+time_spend_company+number_project,data=test_data)
+summary(model)
+```
+#linear regression model/train_data
+```{r}
+model=lm(satisfaction_level~Emp.ID+salary+promotion_last_5years+average_montly_hours+last_evaluation+time_spend_company+Work_accident+number_project,data=train_data)
+summary(model)
+```
+
+#this plot clearly provide the insight into how satisfaction level are distributed across employees.
+```{r}
+ggplot(projects,aes(x=satisfaction_level))+geom_histogram(bins=30,fill="blue",color="black")+ggtitle("distribution of employee satisfaction levels")+xlab("satisfaction level")+ylab("frequency")+theme_minimal()
+```
+#this plot show the distribution of satisfaction levels for employees in each department,including median,interquartile range,and potential outliers
+
+```{r}
+ggplot(train_data,aes(x=dept,y=satisfaction_level,fill=dept))+geom_boxplot()+ggtitle("satisfaction levels across department")+xlab("department")+ylab("satisfaction levels")+theme_minimal()+theme(axis.text.x = element_text(angle = 45,hjust = 1))+scale_fill_brewer(palette = "set3")
+```
+#this plot shows how salary levels are distributed among employees based on their promotion status in the last 5 years.
+```{r}
+ggplot(data = projects,aes(x=promotion_last_5years,fill=salary))+geom_bar(position = "dodge")+ggtitle("promotion_last_5years vs salary")+xlab("promotion last 5 years")+ylab("count")+scale_fill_brewer(palette = "set2",name="salary")+theme_minimal()
+```
+```{r}
+ggplot(projects,aes(x=Emp.ID,y=satisfaction_level,color=salary))+geom_point(size=3,alpha=0.7)+scale_color_gradient(low="white",high="black")+labs(title = "scatter plot of Emp.ID vs satisfaction level by salary",x="Emp.ID",y="satisfaction level",color="salary")+theme_minimal()
+```
+
+
